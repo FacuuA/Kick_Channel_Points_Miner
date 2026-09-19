@@ -31,7 +31,8 @@ async def main():
 
     # 1. Конфиг
     try:
-        with open("config.json", "r", encoding="utf-8") as f:
+        config_path = os.environ.get("CONFIG_PATH", "config.json")
+        with open(config_path, "r", encoding="utf-8") as f:
             config = json.load(f)
 
         logger.remove()
@@ -70,10 +71,10 @@ async def main():
     # 5. Web Dashboard
     web_cfg = config.get("WebDashboard", {})
     if web_cfg.get("enabled", False):
-        port = web_cfg.get("port", 5000)
+        port = int(os.environ.get("PORT", web_cfg.get("port", 5000)))
         try:
             web_server.start_server(account_manager, port)
-            logger.info(f"🌍 Web Dashboard: http://localhost:{port}")
+            logger.info(f"🌍 Web Dashboard running on port {port}")
         except Exception as e:
             logger.error(f"Web Dashboard не запустился: {e}")
 
